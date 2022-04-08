@@ -103,7 +103,7 @@ def get_args():
   parser.add_argument('--n-channels', '-nc', type=str, default='16,8', help='specifies conv gen kernel sizes')
 
   # DP SPEC
-  parser.add_argument('--d-rff', type=int, default=1000, help='number of random filters for apprixmate mmd')
+  parser.add_argument('--d-rff', type=int, default=10_000, help='number of random filters for apprixmate mmd')
   parser.add_argument('--rff-sigma', '-rffsig', type=str, default=None, help='standard dev. for filter sampling')
   parser.add_argument('--noise-factor', '-noise', type=float, default=5.0, help='privacy noise parameter')
 
@@ -178,7 +178,7 @@ def synthesize_data_with_uniform_labels(gen, device, gen_batch_size=1000, n_data
 
 def test_results(data_key, log_name, log_dir, data_tuple, eval_func):
   if data_key in {'digits', 'fashion'}:
-    final_score = test_gen_data(log_name, data_key, subsample=0.1, custom_keys='logistic_reg')
+    final_score = test_gen_data(log_name, data_key, subsample=0.1, custom_keys='logistic_reg', data_from_torch=True)
     log_final_score(log_dir, final_score)
   elif data_key == '2d':
     final_score = test_passed_gen_data(log_name, data_tuple, log_save_dir=None, log_results=False,
@@ -201,6 +201,7 @@ def main():
   # load settings
   ar = get_args()
   pt.manual_seed(ar.seed)
+  np.random.seed(ar.seed)
   use_cuda = pt.cuda.is_available()
   device = pt.device("cuda" if use_cuda else "cpu")
 

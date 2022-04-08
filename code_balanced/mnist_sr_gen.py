@@ -99,7 +99,7 @@ def get_args():
   parser.add_argument('--mmd-type', type=str, default='sphere', help='how to approx mmd', choices=['sphere', 'r+r'])
 
   # DP SPEC
-  parser.add_argument('--d-rff', type=int, default=1000, help='number of random filters for apprixmate mmd')
+  parser.add_argument('--d-rff', type=int, default=10_000, help='number of random filters for apprixmate mmd')
   parser.add_argument('--rff-sigma', '-rffsig', type=str, default=None, help='standard dev. for filter sampling')
   parser.add_argument('--noise-factor', '-noise', type=float, default=5.0, help='privacy noise parameter')
 
@@ -150,6 +150,8 @@ def main():
 
   ar = get_args()
   pt.manual_seed(ar.seed)
+  np.random.seed(ar.seed)
+
   use_cuda = pt.cuda.is_available()
   device = pt.device("cuda" if use_cuda else "cpu")
 
